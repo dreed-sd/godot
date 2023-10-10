@@ -469,10 +469,10 @@ bool ProjectSettings::_load_resource_pack(const String &p_pack, bool p_replace_f
 		return false;
 	}
 
-	// this pack may have declared new global classes (make sure they are picked up)
+	// This pack may have declared new global classes (make sure they are picked up).
 	ProjectSettings::get_singleton()->refresh_global_class_list();
 
-	// this pack may have defined new UIDs, make sure they are cached
+	// This pack may have defined new UIDs, make sure they are cached.
 	ResourceUID::get_singleton()->load_from_cache(false);
 
 	//if data.pck is found, all directory access will be from here
@@ -1183,7 +1183,7 @@ Variant ProjectSettings::get_setting(const String &p_setting, const Variant &p_d
 }
 
 void ProjectSettings::refresh_global_class_list() {
-	// this is called after mounting a new PCK file to pick up class changes
+	// This is called after mounting a new PCK file to pick up class changes.
 	is_global_class_list_loaded = false; // make sure we read from the freshly mounted PCK
 	Array script_classes = get_global_class_list();
 	for (int i = 0; i < script_classes.size(); i++) {

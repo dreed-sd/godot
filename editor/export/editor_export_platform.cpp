@@ -831,32 +831,23 @@ String EditorExportPlatform::_get_script_encryption_key(const Ref<EditorExportPr
 	return p_preset->get_script_encryption_key().to_lower();
 }
 
-Vector<String> EditorExportPlatform::get_forced_export_files(bool p_main_pack) {
-	Vector<String> files;
+Vector<String> EditorExportPlatform::get_main_pck_required_files() {
+	// First, get files required by any PCK.
+	Vector<String> files = get_forced_export_files();
 
-	// these files are only needed if we are exporting a main pack file
-	if (p_main_pack) {
-		String icon = GLOBAL_GET("application/config/icon");
-		if (!icon.is_empty() && FileAccess::exists(icon)) {
-			files.push_back(icon);
-		}
-
-		String splash = GLOBAL_GET("application/boot_splash/image");
-		if (!splash.is_empty() && icon != splash && FileAccess::exists(splash)) {
-			files.push_back(splash);
-		}
-
-		String extension_list_config_file = GDExtension::get_extension_list_config_file();
-		if (FileAccess::exists(extension_list_config_file)) {
-			files.push_back(extension_list_config_file);
-		}
+	String icon = GLOBAL_GET("application/config/icon");
+	if (!icon.is_empty() && FileAccess::exists(icon)) {
+		files.push_back(icon);
 	}
 
-	files.push_back(ProjectSettings::get_singleton()->get_global_class_list_path());
+	String splash = GLOBAL_GET("application/boot_splash/image");
+	if (!splash.is_empty() && icon != splash && FileAccess::exists(splash)) {
+		files.push_back(splash);
+	}
 
-	String resource_cache_file = ResourceUID::get_cache_file();
-	if (FileAccess::exists(resource_cache_file)) {
-		files.push_back(resource_cache_file);
+	String extension_list_config_file = GDExtension::get_extension_list_config_file();
+	if (FileAccess::exists(extension_list_config_file)) {
+		files.push_back(extension_list_config_file);
 	}
 
 	// Store text server data if it is supported.
@@ -876,6 +867,18 @@ Vector<String> EditorExportPlatform::get_forced_export_files(bool p_main_pack) {
 				MessageQueue::get_singleton()->push_callable(callable_mp_static(DirAccess::remove_absolute), icu_data_file);
 			}
 		}
+	}
+
+	return files;
+}
+
+Vector<String> EditorExportPlatform::get_forced_export_files() {
+	Vector<String> files;
+	files.push_back(ProjectSettings::get_singleton()->get_global_class_list_path());
+
+	String resource_cache_file = ResourceUID::get_cache_file();
+	if (FileAccess::exists(resource_cache_file)) {
+		files.push_back(resource_cache_file);
 	}
 
 	return files;
@@ -929,7 +932,7 @@ Error EditorExportPlatform::export_project_files(bool p_main_pack, const Ref<Edi
 	}
 
 	if (p_main_pack) {
-		//add native icons to non-resource include list
+		// Add native icons to non-resource include list.
 		_edit_filter_list(paths, String("*.icns"), false);
 		_edit_filter_list(paths, String("*.ico"), false);
 	}
@@ -1359,7 +1362,12 @@ Error EditorExportPlatform::export_project_files(bool p_main_pack, const Ref<Edi
 		}
 	}
 
-	Vector<String> forced_export = get_forced_export_files(p_main_pack);
+	Vector<String> forced_export;
+	if (p_main_pack) {
+		forced_export = get_main_pck_required_files();
+	} else {
+		forced_export = get_forced_export_files();
+	}
 	for (int i = 0; i < forced_export.size(); i++) {
 		Vector<uint8_t> array = FileAccess::get_file_as_bytes(forced_export[i]);
 		err = p_func(p_udata, forced_export[i], array, idx, total, enc_in_filters, enc_ex_filters, key);

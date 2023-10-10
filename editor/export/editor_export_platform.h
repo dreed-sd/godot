@@ -203,7 +203,8 @@ public:
 		return worst_type;
 	}
 
-	static Vector<String> get_forced_export_files(bool p_main_pack);
+	static Vector<String> get_main_pck_required_files();
+	static Vector<String> get_forced_export_files();
 
 	virtual bool fill_log_messages(RichTextLabel *p_log, Error p_err);
 
