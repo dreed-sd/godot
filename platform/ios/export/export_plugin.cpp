@@ -1556,7 +1556,7 @@ Error EditorExportPlatformIOS::_export_project_helper(const Ref<EditorExportPres
 	}
 	String pack_path = dest_dir + binary_name + ".pck";
 	Vector<SharedObject> libraries;
-	Error err = save_pack(p_preset, p_debug, pack_path, &libraries);
+	Error err = save_pack(true, p_preset, p_debug, pack_path, &libraries);
 	if (err) {
 		return err;
 	}
