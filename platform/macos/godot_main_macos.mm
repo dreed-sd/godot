@@ -74,8 +74,8 @@ int main(int argc, char **argv) {
 		return EXIT_FAILURE;
 	}
 
-	int ret= Main::start();
-	if (ret) {
+	int ret = Main::start();
+	if (ret == EXIT_SUCCESS) {
 		os.run();
 	} else {
 		os.set_exit_code(EXIT_FAILURE);
