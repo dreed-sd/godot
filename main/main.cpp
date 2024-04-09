@@ -3276,11 +3276,7 @@ int Main::start() {
 			Error err;
 
 			Vector<String> paths = get_files_with_extension(gdscript_docs_path, "gd");
-<<<<<<< HEAD
 			ERR_FAIL_COND_V_MSG(paths.size() == 0, false, "Couldn't find any GDScript files under the given directory: " + gdscript_docs_path);
-=======
-			ERR_FAIL_COND_V_MSG(paths.is_empty(), EXIT_FAILURE, "Couldn't find any GDScript files under the given directory: " + gdscript_docs_path);
->>>>>>> 023dcd44c1 (Refactor OS exit code to be `EXIT_SUCCESS` by default)
 
 			for (const String &path : paths) {
 				Ref<GDScript> gdscript = ResourceLoader::load(path);
