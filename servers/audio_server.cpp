@@ -1675,6 +1675,17 @@ void AudioServer::set_enable_tagging_used_audio_streams(bool p_enable) {
 	tag_used_audio_streams = p_enable;
 }
 
+void AudioServer::_tag_collect_pass_custom(uint32_t p_pass, bool p_containers) const {
+	for (int i = 0; i < buses.size(); i++) {
+		Bus *bus = buses[i];
+		for (int j = 0; j < bus->effects.size(); j++) {
+			if (bus->effects[j].effect.is_valid()) {
+				bus->effects[j].effect->tag_collect_pass(p_pass, p_containers);
+			}
+		}
+	}
+}
+
 void AudioServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_bus_count", "amount"), &AudioServer::set_bus_count);
 	ClassDB::bind_method(D_METHOD("get_bus_count"), &AudioServer::get_bus_count);
